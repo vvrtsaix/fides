@@ -1,0 +1,28 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{admin}}/admin/earning-rules/{{rule_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "base_points": 20,
+    "active": false
+  }
+}
+
+docs {
+  Partial. Editable: event_type, condition, base_points, points_expire_days, active.
+  Toggle active to deactivate/reactivate a rule.
+}

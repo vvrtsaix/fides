@@ -1,0 +1,21 @@
+meta {
+  name: Fulfill Lock
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{runtime}}/v1/locks/{{lock_id}}/fulfill
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Commit a HELD lock: the locked points are spent for good (status FULFILLED).
+  Call when the order the lock was created for completes. 404 if the lock id is
+  unknown; errors if already fulfilled/released/expired.
+}

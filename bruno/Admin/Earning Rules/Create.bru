@@ -1,0 +1,33 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{admin}}/admin/earning-rules
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "event_type": "order.completed",
+    "condition": {},
+    "base_points": 10,
+    "points_expire_days": 365
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) bru.setEnvVar("rule_id", res.body.id);
+}
+
+docs {
+  condition: JSON object (default {}). points_expire_days: optional, null = never.
+}

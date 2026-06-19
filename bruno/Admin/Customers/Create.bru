@@ -1,0 +1,30 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{admin}}/admin/customers
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "external_id": "{{external_id}}",
+    "email": "alice@example.com",
+    "phone": "+15551234567"
+  }
+}
+
+docs {
+  Explicit registration. Idempotent: re-posting the same external_id updates
+  email/phone instead of erroring (the ledger also auto-creates customers on
+  first transaction). email/phone optional.
+}

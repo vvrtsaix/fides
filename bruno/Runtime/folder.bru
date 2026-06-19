@@ -1,0 +1,58 @@
+meta {
+  name: Runtime
+  seq: 1
+}
+
+docs {
+  # Customer integration flow (runtime surface)
+
+  The runtime surface (`:8080`) is the customer-facing API: points, locks,
+  redemption. Every `/v1/*` call needs the `X-Tenant-Id` header — set
+  `{{tenant_id}}` by running **Admin > Tenants > Create** first. Money-mutating
+  writes (transactions, locks, redemptions, events) also need an `Idempotency-Key`.
+
+  ## End-to-end sequence
+
+  1. **Register the customer** *(optional)* — `POST /admin/customers`
+     (**Admin > Customers > Create**). You can skip this: a customer is auto-created
+     on its first transaction. Register up front when you want email/phone attached.
+
+  2. **Earn points** — `POST /v1/customers/:external_id/transactions` with
+     `type: "EARN"` (**Post Transaction**). Needs an `Idempotency-Key`.
+     → *Event-driven alternative:* `POST /v1/events` (**Post Event**) — the worker
+     matches earning rules and mints points asynchronously (returns PENDING).
+
+  3. **Check state** — `GET /v1/customers/:external_id/balance` (**Get Balance**)
+     for spendable/locked/lifetime + current tier. (Profile/email lives on
+     **Admin > Customers > Get**.) 404 here means the customer has no ledger activity yet.
+
+  4. **(Optional) Pre-authorize a spend** — `POST /v1/customers/:external_id/locks`
+     (**Create Lock**) holds points during checkout, then **Fulfill Lock** (commit)
+     or **Release Lock** (cancel). Unresolved locks auto-expire after ~15 min.
+
+  5. **Redeem a reward** — `POST /v1/customers/:external_id/redemptions`
+     (**Redeem Reward**). Needs a `reward_id` (**Admin > Rewards > Create**).
+     Atomically checks stock + campaign budget, burns points FEFO, and returns a
+     `voucher_code`. Errors: out of stock, budget exceeded, insufficient balance.
+
+  6. **Use the voucher** — `POST /v1/vouchers/:code/use` (**Use Voucher**) at point
+     of sale. One-time; errors if already used or expired.
+
+  7. **Erase (GDPR)** — `POST /v1/customers/:external_id/anonymize`
+     (**Anonymize Customer**) scrubs PII and sets status `ANONYMIZED`; the ledger
+     stays intact. Same effect as **Admin > Customers > Delete**.
+
+  ## Minimal happy path
+
+  `Admin/Tenants/Create` → `Admin/Customers/Create` → `Post Transaction (EARN)` →
+  `Get Balance` → `Admin/Campaigns/Create` → `Admin/Rewards/Create` →
+  `Redeem Reward` → `Use Voucher`.
+
+  ## Notes
+
+  - **Idempotency-Key**: reusing a key with the same body replays the original
+    result (`replayed: true`); reusing it with a *different* body returns 409.
+  - **Tiers** update automatically as `lifetime_earned` crosses thresholds — no call needed.
+  - **Segments** are managed on the admin side (**Admin > Segments**); see a customer's
+    memberships via **Admin > Customers > Segments**.
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{admin}}/admin/campaigns
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "name": "summer-2026",
+    "budget_cap": "10000.00"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) bru.setEnvVar("campaign_id", res.body.id);
+}
+
+docs {
+  budget_cap is a decimal STRING (avoids float rounding).
+}

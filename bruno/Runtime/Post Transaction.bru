@@ -1,0 +1,33 @@
+meta {
+  name: Post Transaction
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{runtime}}/v1/customers/{{external_id}}/transactions
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  Idempotency-Key: txn-001
+  content-type: application/json
+}
+
+body:json {
+  {
+    "type": "EARN",
+    "amount": 100,
+    "expires_at": null
+  }
+}
+
+docs {
+  type: one of EARN | REDEEM | EXPIRE | ADJUSTMENT | UNLOCK.
+  amount: i64 (EARN must be > 0; ADJUSTMENT must be != 0).
+  expires_at: optional RFC3339 timestamp, null to omit.
+  Reusing the same Idempotency-Key with the same body replays (replayed:true);
+  same key + different body = 409.
+}

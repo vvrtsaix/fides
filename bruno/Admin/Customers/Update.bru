@@ -1,0 +1,29 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{admin}}/admin/customers/{{external_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "email": "alice+new@example.com",
+    "phone": "+15559999999",
+    "current_tier_id": "{{tier_id}}"
+  }
+}
+
+docs {
+  Partial. Editable: email, phone, current_tier_id (manual tier override).
+  external_id and status are not editable here (status is owned by Delete/anonymize).
+}

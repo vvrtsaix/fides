@@ -1,0 +1,34 @@
+meta {
+  name: Create Lock
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{runtime}}/v1/customers/{{external_id}}/locks
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  Idempotency-Key: lock-001
+  content-type: application/json
+}
+
+body:json {
+  {
+    "amount": 50
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) bru.setEnvVar("lock_id", res.body.id);
+}
+
+docs {
+  Reserve (hold) points so they can't be double-spent while an order is in flight —
+  a pre-authorization. Moves `amount` from spendable to locked and returns a lock id
+  (saved to {{lock_id}}). Status HELD. Locks auto-expire after ~15 min (worker sweeper),
+  returning the points. Needs an Idempotency-Key. Follow with Fulfill (commit) or Release (cancel).
+}

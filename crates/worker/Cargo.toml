@@ -1,0 +1,19 @@
+[package]
+name = "fides-worker"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "worker"
+path = "src/main.rs"
+
+[dependencies]
+fides-shared.workspace = true
+fides-core.workspace = true
+fides-db.workspace = true
+tokio.workspace = true
+sqlx.workspace = true
+tracing.workspace = true
+anyhow.workspace = true
+reqwest.workspace = true

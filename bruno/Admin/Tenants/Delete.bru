@@ -1,0 +1,15 @@
+meta {
+  name: Delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{admin}}/platform/tenants/{{tenant_id}}
+  body: none
+  auth: none
+}
+
+docs {
+  Soft delete: sets status = SUSPENDED (never hard-deleted — tenant-scoped rows FK to it).
+}

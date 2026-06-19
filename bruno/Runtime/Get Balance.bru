@@ -1,0 +1,21 @@
+meta {
+  name: Get Balance
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{runtime}}/v1/customers/{{external_id}}/balance
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Current point balance for a customer: spendable, locked, lifetime earned/redeemed,
+  plus current tier. 404 if the customer has never had any ledger activity (no balance row).
+  Call after EARN/redeem to confirm the new balance.
+}

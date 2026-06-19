@@ -1,0 +1,8 @@
+# Local dev config. Copy to config.toml (gitignored) or set FIDES_* env vars instead.
+# Env vars override file values.
+
+database_url = "postgres://postgres:postgres@127.0.0.1:5432/fides"
+runtime_addr = "0.0.0.0:8080"
+admin_addr   = "0.0.0.0:8081"
+db_max_connections = 20
+log_format = "pretty"   # "json" in prod

@@ -1,0 +1,36 @@
+meta {
+  name: Redeem Reward
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{runtime}}/v1/customers/{{external_id}}/redemptions
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  Idempotency-Key: redeem-001
+  content-type: application/json
+}
+
+body:json {
+  {
+    "reward_id": "{{reward_id}}"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.voucher_code) bru.setEnvVar("voucher_code", res.body.voucher_code);
+}
+
+docs {
+  Spend points on a reward → mints a voucher. One atomic transaction: checks reward
+  stock + campaign budget, burns points FEFO (oldest-expiring first), decrements stock,
+  charges the campaign, issues a voucher code (saved to {{voucher_code}}).
+  Needs reward_id (from Admin > Rewards > Create) and an Idempotency-Key.
+  Errors: out of stock, budget exceeded, or insufficient spendable balance.
+  Follow with Use Voucher to redeem the voucher at point of sale.
+}

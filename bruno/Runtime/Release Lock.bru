@@ -1,0 +1,20 @@
+meta {
+  name: Release Lock
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{runtime}}/v1/locks/{{lock_id}}/release
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Cancel a HELD lock: the locked points return to spendable (status RELEASED).
+  Call when the order is cancelled/abandoned before the ~15-min auto-expiry.
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{admin}}/admin/webhook-subscriptions/{{subscription_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Soft delete: sets active = false.
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Anonymize Customer
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{runtime}}/v1/customers/{{external_id}}/anonymize
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  GDPR erasure: scrubs PII (email/phone) and sets status ANONYMIZED, while keeping
+  the immutable ledger/balances intact. 404 if the customer doesn't exist.
+  Same effect as Admin > Customers > Delete (this is the runtime-side entry point).
+}

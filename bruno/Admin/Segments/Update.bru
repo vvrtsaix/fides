@@ -1,0 +1,28 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{admin}}/admin/segments/{{segment_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "name": "vip-tier-1",
+    "description": "Top spenders",
+    "active": true
+  }
+}
+
+docs {
+  Partial — omit fields to leave unchanged.
+}

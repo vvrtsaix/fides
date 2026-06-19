@@ -1,0 +1,27 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{admin}}/platform/tenants/{{tenant_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  content-type: application/json
+}
+
+body:json {
+  {
+    "name": "acme-renamed",
+    "status": "ACTIVE"
+  }
+}
+
+docs {
+  Partial update — omit fields to leave them unchanged. currency is immutable.
+  status: ACTIVE | SUSPENDED.
+}

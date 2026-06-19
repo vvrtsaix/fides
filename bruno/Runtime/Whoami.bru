@@ -1,0 +1,21 @@
+meta {
+  name: Whoami
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{runtime}}/v1/whoami
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Echoes back the tenant resolved from X-Tenant-Id ({"tenant_id":"..."}).
+  Smoke test that your tenant header is valid and the tenant-scoping middleware
+  accepts it before you start hitting real customer endpoints.
+}

@@ -1,0 +1,29 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{admin}}/admin/rewards/{{reward_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "available_stock": 50,
+    "cost_points": 600,
+    "active": true
+  }
+}
+
+docs {
+  Partial. Editable: name, cost_points, reward_value (decimal string), available_stock,
+  valid_days, active. campaign_id is fixed at creation.
+}

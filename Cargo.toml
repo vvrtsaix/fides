@@ -1,0 +1,59 @@
+[workspace]
+resolver = "2"
+members = ["crates/shared", "crates/core", "crates/db", "crates/api", "crates/worker"]
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+license = "proprietary"
+
+[workspace.dependencies]
+# async runtime + web
+tokio = { version = "1", features = ["full"] }
+axum = "0.7"
+tower = "0.5"
+tower-http = { version = "0.6", features = ["trace"] }
+
+# db — note: NOT using query! macros in P0, so the workspace builds with no DATABASE_URL
+sqlx = { version = "0.8", default-features = false, features = [
+    "runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "migrate", "macros",
+    "rust_decimal",
+] }
+
+# money / ids / time
+# serde-str: Decimal serializes/deserializes as a string — matches the money-as-string API convention.
+rust_decimal = { version = "1", features = ["db-postgres", "serde-str"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# serde
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# webhook signing
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+
+# config / errors / logging
+figment = { version = "0.10", features = ["env", "toml"] }
+thiserror = "1"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# OpenTelemetry (OTLP/HTTP export → Jaeger)
+opentelemetry = "0.27"
+opentelemetry_sdk = { version = "0.27", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.27", default-features = false, features = ["trace", "http-proto", "reqwest-client"] }
+tracing-opentelemetry = "0.28"
+
+# internal crates
+fides-shared = { path = "crates/shared" }
+fides-core = { path = "crates/core" }
+fides-db = { path = "crates/db" }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

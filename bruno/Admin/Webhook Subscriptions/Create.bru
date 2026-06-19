@@ -1,0 +1,32 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{admin}}/admin/webhook-subscriptions
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "url": "https://example.com/hooks/fides",
+    "event_type": "order.completed",
+    "secret": "whsec_changeme"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) bru.setEnvVar("subscription_id", res.body.id);
+}
+
+docs {
+  event_type: exact match, or "*" for all events.
+}

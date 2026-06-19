@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD — Open Loyalty Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1b1815;
+            --ink-soft: #4a443d;
+            --ink-faint: #8a8074;
+            --paper: #f3efe6;
+            --paper-card: #fbf9f4;
+            --line: #ddd5c6;
+            --gold: #b8862f;
+            --gold-deep: #8a5e16;
+            --gold-wash: #f4ead1;
+            --emerald: #2f6b46;
+            --crimson: #9c3a2e;
+            --shadow: 18px 18px 0 rgba(27, 24, 21, 0.04);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 40px; }
+
+        body {
+            font-family: "Newsreader", Georgia, serif;
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: var(--ink-soft);
+            margin: 0;
+            background-color: var(--paper);
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(27,24,21,0.04) 1px, transparent 0);
+            background-size: 22px 22px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection { background: var(--gold-wash); color: var(--ink); }
+
+        /* ---------- Layout shell ---------- */
+        .layout {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            gap: 0;
+            max-width: 1240px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        /* ---------- Sidebar / TOC ---------- */
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 48px 28px 48px 36px;
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            overflow-y: auto;
+        }
+        .sidebar .mark {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold-deep);
+        }
+        .sidebar .mark .dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .sidebar h4 {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--ink-faint);
+            margin: 0 0 14px 0;
+            font-weight: 500;
+        }
+        .toc { list-style: none; margin: 0; padding: 0; }
+        .toc li { margin: 0; }
+        .toc a {
+            display: block;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.78rem;
+            line-height: 1.35;
+            color: var(--ink-soft);
+            text-decoration: none;
+            padding: 7px 0 7px 16px;
+            border-left: 2px solid var(--line);
+            transition: all 0.18s ease;
+        }
+        .toc a:hover {
+            color: var(--ink);
+            border-left-color: var(--gold);
+            padding-left: 22px;
+        }
+        .toc .num { color: var(--gold-deep); margin-right: 8px; }
+
+        /* ---------- Main column ---------- */
+        .main { padding: 0 6vw 120px; min-width: 0; }
+
+        /* ---------- Masthead ---------- */
+        .masthead {
+            padding: 72px 0 40px;
+            border-bottom: 3px double var(--ink);
+            margin-bottom: 8px;
+        }
+        .eyebrow {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: var(--gold-deep);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        h1 {
+            font-family: "Fraunces", serif;
+            font-optical-sizing: auto;
+            font-weight: 900;
+            font-size: clamp(2.8rem, 7vw, 5.2rem);
+            line-height: 0.96;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin: 0 0 26px;
+        }
+        h1 em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--gold-deep);
+        }
+        .lede {
+            font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+            line-height: 1.5;
+            color: var(--ink-soft);
+            max-width: 46ch;
+            margin: 0;
+        }
+        .lede strong { color: var(--ink); font-weight: 600; }
+
+        /* ---------- Section headers ---------- */
+        h2 {
+            font-family: "Fraunces", serif;
+            font-weight: 600;
+            font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+            line-height: 1.05;
+            letter-spacing: -0.015em;
+            color: var(--ink);
+            margin: 96px 0 8px;
+            scroll-margin-top: 40px;
+            position: relative;
+            padding-top: 28px;
+        }
+        h2::before {
+            content: attr(data-num);
+            display: block;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            color: var(--gold-deep);
+            margin-bottom: 14px;
+        }
+        h2::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 56px; height: 4px;
+            background: var(--gold);
+        }
+
+        h3 {
+            font-family: "Fraunces", serif;
+            font-weight: 600;
+            font-size: 1.35rem;
+            letter-spacing: -0.01em;
+            color: var(--ink);
+            margin: 48px 0 6px;
+        }
+        h3 .mod-id {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gold-deep);
+            background: var(--gold-wash);
+            padding: 3px 8px;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        p { margin: 0 0 18px; }
+        .section-intro { font-size: 1.1rem; color: var(--ink-soft); max-width: 64ch; }
+
+        a.inline { color: var(--gold-deep); }
+
+        /* ---------- Code ---------- */
+        code {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.82em;
+            background: var(--paper-card);
+            border: 1px solid var(--line);
+            padding: 1px 6px;
+            border-radius: 4px;
+            color: var(--gold-deep);
+            white-space: nowrap;
+        }
+
+        /* ---------- Requirement cards ---------- */
+        .reqs {
+            list-style: none;
+            margin: 26px 0;
+            padding: 0;
+            display: grid;
+            gap: 14px;
+        }
+        .reqs li {
+            position: relative;
+            background: var(--paper-card);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 20px 24px 20px 24px;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+        .reqs li:hover {
+            border-color: var(--gold);
+            transform: translateX(4px);
+        }
+        .reqs li::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 16px; bottom: 16px;
+            width: 3px;
+            background: var(--gold);
+            border-radius: 0 3px 3px 0;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .reqs li:hover::before { opacity: 1; }
+        .tag {
+            display: inline-block;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--emerald);
+            border: 1px solid var(--emerald);
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .reqs li .req-title {
+            font-family: "Fraunces", serif;
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 1.08rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .reqs li p { margin: 0; font-size: 0.98rem; }
+
+        /* ---------- Workflow diagrams ---------- */
+        .flow {
+            background: linear-gradient(160deg, var(--paper-card), #f6f1e6);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 36px 32px;
+            margin: 40px 0;
+            box-shadow: var(--shadow);
+        }
+        .flow-title {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: var(--gold-deep);
+            text-align: center;
+            margin-bottom: 26px;
+        }
+        .flow-chain {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .node {
+            background: var(--paper-card);
+            border: 1.5px solid var(--ink);
+            border-radius: 10px;
+            padding: 14px 22px;
+            text-align: center;
+            font-size: 0.98rem;
+            color: var(--ink);
+            max-width: 380px;
+            box-shadow: 4px 4px 0 rgba(27,24,21,0.06);
+        }
+        .node .sub {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--ink-faint);
+            margin-top: 4px;
+            font-style: italic;
+        }
+        .node code { white-space: normal; }
+        .arrow {
+            color: var(--gold);
+            font-size: 1.4rem;
+            line-height: 1;
+            padding: 12px 0;
+            position: relative;
+        }
+        .arrow .label {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            font-style: normal;
+            color: var(--ink-faint);
+            text-transform: uppercase;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* fork layout for lock lifecycle */
+        .fork {
+            display: flex;
+            gap: 28px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .fork-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 220px;
+        }
+        .branch-label {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 10px 0 6px;
+        }
+        .branch-label.ok { color: var(--emerald); }
+        .branch-label.fail { color: var(--crimson); }
+        .node.ok { border-color: var(--emerald); }
+        .node.fail { border-color: var(--crimson); }
+
+        /* ---------- Highlight / notice box ---------- */
+        .notice {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 18px;
+            align-items: start;
+            background: var(--gold-wash);
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin: 30px 0;
+        }
+        .notice .glyph {
+            font-family: "Fraunces", serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--gold-deep);
+            line-height: 1;
+        }
+        .notice p { margin: 0; color: var(--ink-soft); }
+        .notice strong { color: var(--ink); }
+
+        /* ---------- Generic lists ---------- */
+        .plain { list-style: none; padding: 0; margin: 22px 0; }
+        .plain li {
+            position: relative;
+            padding: 10px 0 10px 28px;
+            border-bottom: 1px solid var(--line);
+            font-size: 1.0rem;
+        }
+        .plain li:last-child { border-bottom: none; }
+        .plain li::before {
+            content: "";
+            position: absolute;
+            left: 4px; top: 19px;
+            width: 7px; height: 7px;
+            border: 1.5px solid var(--gold);
+            transform: rotate(45deg);
+        }
+        .plain strong { color: var(--ink); font-weight: 600; }
+
+        /* ---------- Metric callouts ---------- */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 26px 0;
+        }
+        .metric {
+            background: var(--paper-card);
+            border: 1px solid var(--line);
+            border-top: 3px solid var(--gold);
+            border-radius: 0 0 10px 10px;
+            padding: 22px 24px;
+        }
+        .metric .big {
+            font-family: "Fraunces", serif;
+            font-weight: 900;
+            font-size: 2.4rem;
+            color: var(--ink);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .metric .big small { font-size: 1rem; font-weight: 600; color: var(--gold-deep); }
+        .metric .cap {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-faint);
+            margin-top: 10px;
+        }
+        .metric p { font-size: 0.92rem; margin: 6px 0 0; }
+
+        /* ---------- Section rule ---------- */
+        .section-foot {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 64px;
+            color: var(--ink-faint);
+        }
+        .section-foot::before, .section-foot::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+        .section-foot span {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+        }
+
+        /* ---------- Footer ---------- */
+        .doc-foot {
+            margin-top: 90px;
+            padding-top: 30px;
+            border-top: 3px double var(--ink);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.72rem;
+            color: var(--ink-faint);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            letter-spacing: 0.06em;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar {
+                position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--line);
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 16px 24px;
+                padding: 24px 6vw;
+            }
+            .sidebar .toc-wrap { display: none; }
+            .main { padding: 0 6vw 80px; }
+            .masthead { padding-top: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+        <div class="mark"><span class="dot"></span>OPEN&nbsp;LOYALTY&nbsp;ENGINE</div>
+        <nav class="toc-wrap">
+            <h4>Contents</h4>
+            <ul class="toc">
+                <li><a href="#overview"><span class="num">01</span>Overview &amp; Principles</a></li>
+                <li><a href="#modules"><span class="num">02</span>Functional Requirements</a></li>
+                <li><a href="#nfr"><span class="num">03</span>Non-Functional Reqs</a></li>
+            </ul>
+        </nav>
+        <div class="toc-wrap" style="margin-top:auto;">
+            <h4>Doc Meta</h4>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; line-height:1.9; color:var(--ink-faint);">
+                v1.0 · DRAFT<br>
+                Headless · API-First<br>
+                Schema-Driven Core
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main">
+
+        <header class="masthead">
+            <div class="eyebrow">
+                <span>Product Requirement Document</span>
+                <span>Core Schema-Driven Architecture</span>
+            </div>
+            <h1>The Open<br>Loyalty <em>Engine</em></h1>
+            <p class="lede">An enterprise-grade, headless loyalty platform that treats points like <strong>financial transactions</strong> — built on absolute data integrity, velocity, and a clean separation of concerns.</p>
+        </header>
+
+        <!-- ===== 1. OVERVIEW ===== -->
+        <section id="overview">
+            <h2 data-num="SECTION 01">Overview &amp; Architectural Principles</h2>
+            <p class="section-intro">This document establishes the product and functional requirements for an enterprise-ready, headless loyalty engine. The platform treats loyalty data similarly to financial transactions, prioritizing absolute data integrity, performance velocity, and a clean separation of concerns.</p>
+
+            <h3>Core Philosophy</h3>
+            <ul class="plain">
+                <li><strong>Headless &amp; API-First.</strong> The engine exposes transactional data and rule structures purely via REST APIs and webhooks. It relies entirely on external frontends (Web, Mobile, POS) for the presentation layer.</li>
+                <li><strong>Single Responsibility.</strong> The platform explicitly manages rules, point computations, financial ledgers, and reward tokens. It does <em>not</em> store product SKUs, marketing copy, or full customer biometric profiles.</li>
+                <li><strong>Immutable Ledger Model.</strong> Point values are never altered via arbitrary addition/subtraction database commands. All balance modifications must occur through append-only accounting transactions.</li>
+            </ul>
+
+            <div class="section-foot"><span>§ 01 — END</span></div>
+        </section>
+
+        <!-- ===== 2. MODULES ===== -->
+        <section id="modules">
+            <h2 data-num="SECTION 02">Module-by-Module Functional Requirements</h2>
+
+            <!-- 2.1 -->
+            <h3><span class="mod-id">2.1</span>Identity &amp; Cache Module</h3>
+            <p class="section-intro">Maps external users to the internal loyalty ecosystem and powers the real-time, high-concurrency presentation layer.</p>
+            <ul class="reqs">
+                <li>
+                    <span class="tag">FR-1.1</span>
+                    <span class="req-title">External Identity Mapping</span>
+                    <p>The system must accept an <code>external_id</code> string from third-party systems (CRMs, Shopify, POS, or ERPs) to associate active loyalty behaviors without duplicating full customer profiles.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-1.2</span>
+                    <span class="req-title">Atomic Cache Maintenance</span>
+                    <p>The system must maintain a denormalized cache table (<code>customer_balances</code>). Every write to the ledger must recalculate and update <code>spendable_balance</code>, <code>locked_balance</code>, <code>lifetime_earned</code>, and <code>lifetime_redeemed</code> inside the same transaction boundary.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-1.3</span>
+                    <span class="req-title">Dynamic Tier Evaluation</span>
+                    <p>Upon any change to <code>lifetime_points</code>, the engine must cross-reference thresholds in the <code>tiers</code> table and instantly update the customer's <code>current_tier_id</code> if a milestone is breached.</p>
+                </li>
+            </ul>
+
+            <div class="flow">
+                <div class="flow-title">Write Transaction Flow</div>
+                <div class="flow-chain">
+                    <div class="node">Incoming Event Hook Ingested</div>
+                    <div class="arrow">↓</div>
+                    <div class="node">Append-only row written to <code>points_ledger</code></div>
+                    <div class="arrow">↓<span class="label">Same ACID Transaction</span></div>
+                    <div class="node">Recalculate &amp; update <code>customer_balances</code> cache</div>
+                    <div class="arrow">↓</div>
+                    <div class="node">Evaluate <code>tiers</code> matrix &amp; trigger upgrade if threshold met</div>
+                </div>
+            </div>
+
+            <!-- 2.2 -->
+            <h3><span class="mod-id">2.2</span>Event Ingestion &amp; Rules Engine</h3>
+            <p class="section-intro">Ingests unstructured user events asynchronously and converts them into point actions based on marketing conditions.</p>
+            <ul class="reqs">
+                <li>
+                    <span class="tag">FR-2.1</span>
+                    <span class="req-title">Schema-less Event Intake</span>
+                    <p>The <code>loyalty_events</code> pipeline must ingest flexible JSONB payloads for seamless compatibility across integrations (e.g. cart arrays from e-commerce vs. location coordinates from a mobile app).</p>
+                </li>
+                <li>
+                    <span class="tag">FR-2.2</span>
+                    <span class="req-title">Asynchronous Ingestion Status</span>
+                    <p>Events must be written immediately with an initial state of <code>PENDING</code>. An async worker evaluates them against rules, shifting state to <code>PROCESSED</code> or <code>FAILED</code>.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-2.3</span>
+                    <span class="req-title">Conditional Processing Engine</span>
+                    <p>The engine must match incoming <code>event_type</code> strings to active rows in <code>earning_rules</code>, evaluating the rule's JSONB condition block against event parameters. If true, base points and modifiers are minted.</p>
+                </li>
+            </ul>
+
+            <!-- 2.3 -->
+            <h3><span class="mod-id">2.3</span>Financial Ledger &amp; Lock Management</h3>
+            <p class="section-intro">Handles data integrity, anti-fraud isolation, and append-only ledger processing.</p>
+            <ul class="reqs">
+                <li>
+                    <span class="tag">FR-3.1</span>
+                    <span class="req-title">Immutable Ledger Modifications</span>
+                    <p>Points can only be adjusted via five strict transaction types: <code>EARN</code>, <code>REDEEM</code>, <code>EXPIRE</code>, <code>ADJUSTMENT</code>, and <code>UNLOCK</code>.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-3.2</span>
+                    <span class="req-title">FEFO Point Expiration Tracking</span>
+                    <p>The system must track <code>expires_at</code> timestamps at the individual transaction-row level. Redemptions consume points from the oldest unexpired earning rows first — First-Expiring, First-Out — via the <code>available_amount</code> ledger track.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-3.3</span>
+                    <span class="req-title">Transactional Fraud Holds</span>
+                    <p>To support return windows or pending checkouts, the engine must support isolation via <code>points_locks</code>. Locked points are deducted from <code>spendable_balance</code> and added to <code>locked_balance</code> until checkout completes (<code>FULFILLED</code>) or times out (<code>RELEASED</code>).</p>
+                </li>
+            </ul>
+
+            <div class="flow">
+                <div class="flow-title">Point Locking Lifecycle</div>
+                <div class="flow-chain">
+                    <div class="node">User Enters Checkout Loop<span class="sub">Points isolated in <code>points_locks</code></span></div>
+                    <div class="arrow">↓</div>
+                    <div class="fork">
+                        <div class="fork-branch">
+                            <div class="branch-label ok">↙ Order Success</div>
+                            <div class="node ok"><code>FULFILLED</code> State<span class="sub">Permanent REDEEM log entry</span></div>
+                        </div>
+                        <div class="fork-branch">
+                            <div class="branch-label fail">Timeout / Cancel ↘</div>
+                            <div class="node fail"><code>RELEASED</code> State<span class="sub">UNLOCK entry restoring balance</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.4 -->
+            <h3><span class="mod-id">2.4</span>Campaigns, Rewards &amp; Fulfillments</h3>
+            <p class="section-intro">Acts as the transactional bridge for reward inventory management and unique asset distribution.</p>
+            <ul class="reqs">
+                <li>
+                    <span class="tag">FR-4.1</span>
+                    <span class="req-title">Budget Overdraft Protection</span>
+                    <p>Before any reward is issued, the engine must verify that <code>campaigns.current_spend</code> plus the reward value does not exceed the defined <code>budget_cap</code>.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-4.2</span>
+                    <span class="req-title">Race Condition Inventory Safeguards</span>
+                    <p>Reward stock (<code>available_stock</code>) must use pessimistic database locking during checkout so two users cannot claim a single remaining voucher in the same millisecond.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-4.3</span>
+                    <span class="req-title">Unique Asset Minting</span>
+                    <p>A successful redemption must deduct points via the ledger and mint a unique alphanumeric code into the <code>vouchers</code> table, flagged <code>ISSUED</code>, tracked until it transitions to <code>USED</code> or passes its <code>valid_until</code> deadline.</p>
+                </li>
+            </ul>
+
+            <!-- 2.5 -->
+            <h3><span class="mod-id">2.5</span>Webhooks &amp; System Audit Integration</h3>
+            <p class="section-intro">Handles out-of-the-box communication with external downstream systems and protects security configurations.</p>
+            <ul class="reqs">
+                <li>
+                    <span class="tag">FR-5.1</span>
+                    <span class="req-title">Outbound Event Messaging</span>
+                    <p>The system must monitor core updates and fire real-time, async HTTP POST requests to URLs registered in <code>webhook_subscriptions</code> based on occurrences (e.g. <code>customer.tier_upgraded</code>).</p>
+                </li>
+                <li>
+                    <span class="tag">FR-5.2</span>
+                    <span class="req-title">Exponential Webhook Backoff</span>
+                    <p>Failed outbound webhooks (recorded in <code>webhook_logs</code>) must auto-retry up to a hard configuration limit using exponential backoff before flagging the log entry as failed.</p>
+                </li>
+                <li>
+                    <span class="tag">FR-5.3</span>
+                    <span class="req-title">Security Auditing</span>
+                    <p>Every operational config alteration (e.g. updating an earning-rule threshold, manually adjusting points) must log a snapshot of the change (<code>old_values</code> vs. <code>new_values</code>) into the read-only <code>audit_logs</code> table.</p>
+                </li>
+            </ul>
+
+            <div class="section-foot"><span>§ 02 — END</span></div>
+        </section>
+
+        <!-- ===== 3. NFR ===== -->
+        <section id="nfr">
+            <h2 data-num="SECTION 03">Non-Functional Requirements</h2>
+
+            <h3>3.1 — Data Integrity &amp; Concurrency</h3>
+            <ul class="plain">
+                <li><strong>ACID Compliance.</strong> All operations binding <code>points_ledger</code>, <code>points_locks</code>, and <code>customer_balances</code> must share strict atomic transactional safety.</li>
+                <li><strong>Isolation Levels.</strong> The database connection must enforce repeatable-read isolation when modifying user balances to prevent phantom writes under high traffic.</li>
+            </ul>
+
+            <h3>3.2 — Performance Thresholds</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="big">&lt;50<small>ms</small></div>
+                    <div class="cap">Read Latency</div>
+                    <p>Requests targeting cached profile objects (<code>customer_balances</code>) via optimized index structures.</p>
+                </div>
+                <div class="metric">
+                    <div class="big">2,000<small>/s</small></div>
+                    <div class="cap">Write Processing</div>
+                    <p>Background ingestion workers must process this many async event entries per second without cascading table-lock blockages.</p>
+                </div>
+            </div>
+
+            <h3>3.3 — Security &amp; Compliance</h3>
+            <div class="notice">
+                <div class="glyph">§</div>
+                <p><strong>Data Minimization Notice.</strong> By design, the core system does not store passwords, full names, addresses, or payment-card tokens — heavily reducing the threat landscape for security teams.</p>
+            </div>
+            <ul class="plain">
+                <li><strong>Anonymization Actions.</strong> To comply with global privacy frameworks (GDPR/CCPA), the system must support an <code>ANONYMIZED</code> status toggle on the customer table — zeroing out identity strings (emails/phones) while retaining historical transaction lines to preserve financial accounting integrity.</li>
+            </ul>
+
+            <div class="section-foot"><span>§ 03 — END</span></div>
+        </section>
+
+        <footer class="doc-foot">
+            <span>OPEN LOYALTY ENGINE · PRD v1.0</span>
+            <span>HEADLESS · IMMUTABLE LEDGER · SCHEMA-DRIVEN</span>
+        </footer>
+
+    </main>
+</div>
+
+</body>
+</html>

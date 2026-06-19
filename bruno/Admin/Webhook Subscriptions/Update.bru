@@ -1,0 +1,27 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{admin}}/admin/webhook-subscriptions/{{subscription_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "url": "https://example.com/hooks/fides-v2",
+    "active": false
+  }
+}
+
+docs {
+  Partial. Editable: url, event_type, secret, active.
+}

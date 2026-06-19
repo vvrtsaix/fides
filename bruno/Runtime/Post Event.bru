@@ -1,0 +1,31 @@
+meta {
+  name: Post Event
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{runtime}}/v1/events
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  Idempotency-Key: event-001
+  content-type: application/json
+}
+
+body:json {
+  {
+    "customer_external_id": "{{external_id}}",
+    "event_type": "order.completed",
+    "payload": {
+      "order_total": "42.00"
+    }
+  }
+}
+
+docs {
+  Returns PENDING immediately; the worker processes it asynchronously.
+}

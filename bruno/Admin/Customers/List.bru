@@ -1,0 +1,15 @@
+meta {
+  name: List
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{admin}}/admin/customers
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}

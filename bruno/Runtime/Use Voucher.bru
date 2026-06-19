@@ -1,0 +1,20 @@
+meta {
+  name: Use Voucher
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{runtime}}/v1/vouchers/{{voucher_code}}/use
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Mark a voucher USED (one-time redemption at point of sale). Uses {{voucher_code}}
+  from Redeem Reward. Errors: unknown code (404), already used, or expired.
+}

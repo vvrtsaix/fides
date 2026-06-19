@@ -1,0 +1,19 @@
+meta {
+  name: List Members
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{admin}}/admin/segments/{{segment_id}}/members
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Customers in this segment.
+}

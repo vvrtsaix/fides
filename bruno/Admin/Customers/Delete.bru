@@ -1,0 +1,20 @@
+meta {
+  name: Delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{admin}}/admin/customers/{{external_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Delete = anonymize (GDPR scrub): sets status = ANONYMIZED and clears PII.
+  Customers are never hard-deleted — the ledger, balances, and vouchers FK them.
+}

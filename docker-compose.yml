@@ -1,0 +1,70 @@
+# Local dev + test stack: Postgres 18 + api (2 ports) + worker. One image, two commands.
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fides
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fides"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    volumes:
+      # PG18: mount at /var/lib/postgresql (data lands in a versioned subdir), not /…/data.
+      - pgdata:/var/lib/postgresql
+
+  # Tracing UI. OTLP in (4317 gRPC / 4318 HTTP), spans viewable at http://localhost:16686.
+  # Spans appear once the app exports OTel (telemetry.rs work — steps 1–2).
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"   # UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    entrypoint: ["/usr/local/bin/api"]
+    environment:
+      FIDES_DATABASE_URL: postgres://postgres:postgres@db:5432/fides
+      FIDES_RUNTIME_ADDR: 0.0.0.0:8080
+      FIDES_ADMIN_ADDR: 0.0.0.0:8081
+      FIDES_LOG_FORMAT: json
+      FIDES_OTEL_ENDPOINT: http://jaeger:4318
+      FIDES_SERVICE_NAME: fides-api
+    ports:
+      - "8080:8080"   # runtime surface
+      - "8081:8081"   # admin surface (fence at the network layer in prod)
+    depends_on:
+      db:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    entrypoint: ["/usr/local/bin/worker"]
+    environment:
+      FIDES_DATABASE_URL: postgres://postgres:postgres@db:5432/fides
+      FIDES_LOG_FORMAT: json
+      FIDES_OTEL_ENDPOINT: http://jaeger:4318
+      FIDES_SERVICE_NAME: fides-worker
+    depends_on:
+      db:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+
+volumes:
+  pgdata:

@@ -1,0 +1,19 @@
+meta {
+  name: Segments
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{admin}}/admin/customers/{{external_id}}/segments
+  body: none
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+}
+
+docs {
+  Segments this customer belongs to (reverse lookup).
+}

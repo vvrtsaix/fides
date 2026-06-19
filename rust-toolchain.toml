@@ -1,0 +1,4 @@
+[toolchain]
+# Track latest stable; do NOT hardcode a version number (see IMPLEMENTATION_PLAN.md).
+channel = "stable"
+components = ["rustfmt", "clippy"]

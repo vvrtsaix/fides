@@ -1,0 +1,32 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{admin}}/admin/segments
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "name": "vip",
+    "description": "High-value customers"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) bru.setEnvVar("segment_id", res.body.id);
+}
+
+docs {
+  Static audience: membership is managed explicitly via the Members requests.
+  description optional. name is unique per tenant.
+}

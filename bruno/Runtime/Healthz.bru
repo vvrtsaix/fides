@@ -1,0 +1,16 @@
+meta {
+  name: Healthz
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{runtime}}/healthz
+  body: none
+  auth: none
+}
+
+docs {
+  Liveness probe for the runtime surface (:8080). Open — no X-Tenant-Id.
+  Returns {"status":"ok"} when the process is up. Use for container/load-balancer health checks.
+}

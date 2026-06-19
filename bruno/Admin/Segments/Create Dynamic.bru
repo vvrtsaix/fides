@@ -1,0 +1,41 @@
+meta {
+  name: Create Dynamic
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{admin}}/admin/segments
+  body: json
+  auth: none
+}
+
+headers {
+  X-Tenant-Id: {{tenant_id}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "name": "big-active",
+    "description": "active customers with 1000+ points",
+    "definition": {
+      "all": [
+        { "field": "lifetime_earned", "op": "gte", "value": 1000 },
+        { "field": "status", "op": "eq", "value": "ACTIVE" }
+      ]
+    }
+  }
+}
+
+docs {
+  Dynamic (rule-based) segment. The worker recomputes membership on a schedule
+  (~60s) — Add/Remove Member are rejected (422) for dynamic segments.
+
+  DSL:
+    leaf:        { "field": <f>, "op": <o>, "value": <v> }
+    combinators: { "all": [..] }  (AND) | { "any": [..] } (OR) | { "not": {..} }
+  fields: lifetime_earned, lifetime_redeemed, spendable_balance, locked_balance (int);
+          current_tier_id (uuid), status (text), created_at (rfc3339 timestamp)
+  ops:    eq, neq, gt, gte, lt, lte, in (value = non-empty array)
+}
